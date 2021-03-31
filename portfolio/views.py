@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import CustomerSerializer
-
+from .serializers import InvestmentSerializer
+from .serializers import StockSerializer
 
 now = timezone.now()
 
@@ -204,4 +205,20 @@ class CustomerList(APIView):
     def get(self,request):
         customers_json = Customer.objects.all()
         serializer = CustomerSerializer(customers_json, many=True)
+        return Response(serializer.data)
+
+
+class InvestmentList(APIView):
+
+    def get(self,request):
+        investment_json = Investment.objects.all()
+        serializer = InvestmentSerializer(investment_json, many=True)
+        return Response(serializer.data)
+
+
+class StockList(APIView):
+
+    def get(self,request):
+        stock_json = Stock.objects.all()
+        serializer = StockSerializer(stock_json, many=True)
         return Response(serializer.data)

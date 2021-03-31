@@ -20,6 +20,8 @@ urlpatterns = [
     path('investment/<int:pk>/delete/', views.investment_delete, name='investment_delete'),
     path('customer/<int:pk>/portfolio/', views.portfolio, name='portfolio'),
     url(r'^customers_json/', views.CustomerList.as_view()),
+    url(r'^investment_json/', views.InvestmentList.as_view()),
+    url(r'^stock_json/', views.StockList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
