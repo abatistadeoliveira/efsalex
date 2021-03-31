@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+import requests
 
 
 # Create your models here.
@@ -57,7 +58,7 @@ class Stock(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='stocks')
     symbol = models.CharField(max_length=10)
     name = models.CharField(max_length=50)
-    shares = models.DecimalField (max_digits=10, decimal_places=1)
+    shares = models.DecimalField(max_digits=10, decimal_places=1)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2)
     purchase_date = models.DateField(default=timezone.now, blank=True, null=True)
 
@@ -70,3 +71,19 @@ class Stock(models.Model):
 
     def initial_stock_value(self):
         return self.shares * self.purchase_price
+
+    def current_stock_price(self):
+        symbol_f = str(self.symbol)
+        main_api = 'http://api.marketstack.com/v1/eod?'
+        api_key = 'access_key=6f158b4fc536101226263b53c9f683e2&limit=1&symbols='
+        url = main_api + api_key + symbol_f
+        json_data = requests.get(url).json()
+        open_price = float(json_data["data"][0]["open"])
+        share_value = open_price
+        return share_value
+
+    def current_stock_value(self):
+        return float(self.current_stock_price()) * float(self.shares)
+
+    def stock_results(self):
+        return float(self.current_stock_value()) - float(self.initial_stock_value())
